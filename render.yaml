@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: backend-js
+    env: node
+    region: oregon
+    buildCommand: "cd backend && npm install"
+    startCommand: "cd backend && npm start"
+    plan: starter
+
+  - type: web
+    name: backend-python
+    env: python
+    region: oregon
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "cd backend && python face_recognition_service.py"
+    plan: starter
+
+  - type: web
+    name: frontend
+    env: node
+    region: oregon
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    plan: starter
