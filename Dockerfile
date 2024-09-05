@@ -1,37 +1,39 @@
-# Use an official Python runtime as a parent image
+# Backend Dockerfile
+# Use a Python base image
 FROM python:3.9-slim
 
-# Install Node.js and npm
-RUN apt-get update && apt-get install -y curl \
-    && curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
-    && apt-get install -y nodejs
-
-# Install additional dependencies for image processing
-RUN apt-get install -y libgl1-mesa-glx libglib2.0-0
-
-# Install supervisor to manage multiple services
-RUN apt-get install -y supervisor
-
-# Set up directories
+# Set working directory
 WORKDIR /app
 
-# Copy all the server files to /app
-COPY ./backend/flask /app/flask
-COPY ./backend/node /app/node
-COPY ./app /app
+# Copy backend files
+COPY ./backend /app/backend
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r /app/flask/requirements.txt
+# Install required Python dependencies
+RUN pip install -r /app/backend/requirements.txt
 
-# Install Node.js dependencies
-RUN cd /app/node && npm install
-RUN cd /app && npm install
+# Install dlib for face recognition
+RUN pip install dlib==19.24.2
 
-# Expose necessary ports
-EXPOSE 3000 5000 5001
+# Expose port
+EXPOSE 5000
 
-# Copy supervisor configuration file
-COPY supervisord.conf /etc/supervisord.conf
+# Run the backend
+CMD ["python", "/app/backend/app.py"]
 
-# Command to start all services
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+# Frontend Dockerfile
+FROM node:14-alpine
+
+WORKDIR /app
+
+# Copy frontend files
+COPY ./src /app/src
+COPY ./package*.json /app/
+
+# Install dependencies and build
+RUN npm install && npm run build
+
+# Expose frontend port
+EXPOSE 3000
+
+# Serve the frontend
+CMD ["npm", "start"]
