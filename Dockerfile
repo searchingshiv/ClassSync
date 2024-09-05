@@ -1,23 +1,39 @@
-# Use an official image as a base
+# Backend Dockerfile
+# Use a Python base image
 FROM python:3.9-slim
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    cmake \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# Set working directory
+WORKDIR /app
 
-# Install npm dependencies
-WORKDIR /app/backend
-RUN npm install
+# Copy backend files
+COPY ./backend /app/backend
 
-# Install Python dependencies
-WORKDIR /app/backend
-COPY requirements.txt .
-RUN pip install dlib==19.24.2 && pip install -r requirements.txt
+# Install required Python dependencies
+RUN pip install -r /app/backend/requirements.txt
 
-# Copy the rest of the application
-COPY . .
+# Install dlib for face recognition
+RUN pip install dlib==19.24.2
 
-# Command to run your app
+# Expose port
+EXPOSE 5000
+
+# Run the backend
+CMD ["python", "/app/backend/app.py"]
+
+# Frontend Dockerfile
+FROM node:14-alpine
+
+WORKDIR /app
+
+# Copy frontend files
+COPY ./src /app/src
+COPY ./package*.json /app/
+
+# Install dependencies and build
+RUN npm install && npm run build
+
+# Expose frontend port
+EXPOSE 3000
+
+# Serve the frontend
 CMD ["npm", "start"]
