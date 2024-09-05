@@ -12,7 +12,7 @@ WORKDIR /app/backend
 RUN npm install
 
 # Install Python dependencies
-WORKDIR /app
+WORKDIR /app/backend
 COPY requirements.txt .
 RUN pip install dlib==19.24.2 && pip install -r requirements.txt
 
