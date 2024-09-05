@@ -18,7 +18,7 @@ WORKDIR /app
 # Copy all the server files to /app
 COPY ./backend/flask /app/flask
 COPY ./backend/node /app/node
-COPY ./app /app/frontend
+COPY ./app /app
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r /app/flask/requirements.txt
