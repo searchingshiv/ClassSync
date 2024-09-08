@@ -1,0 +1,1 @@
+web: cd backend && npm start && python face_recognition_service.py && cd .. && cd npm start
